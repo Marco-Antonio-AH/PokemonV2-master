@@ -19,7 +19,8 @@ data class Act2ViewState(
     val isLoading: Boolean = false,
     val pokemon: PokemonResponse? = null,
     val listPokemon:List<PokemonMap> = listOf(),
-    val filteredListPokemon:List<PokemonMap> = listOf()
+    val filteredListPokemon:List<PokemonMap> = listOf(),
+    val pokemonListLimitState : List<ListLimitPokemon> = listOf()
 ) : ViewState()
 //ListDescription(id = 0, description = "")
 @Parcelize
@@ -29,3 +30,11 @@ data class ListDescription(
     @SerializedName("list")
     val description: String = "",
 ) : Parcelable
+
+@Parcelize
+data class ListLimitPokemon(
+    val name : String = "",
+    val url: String = "",
+
+):Parcelable
+

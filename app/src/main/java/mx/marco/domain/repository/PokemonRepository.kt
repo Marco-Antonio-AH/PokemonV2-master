@@ -1,5 +1,6 @@
 package mx.marco.domain.repository
 
+import mx.marco.domain.model.network.response.PokemonLimitListResponse
 import mx.marco.domain.model.network.response.PokemonListResponse
 import mx.marco.domain.model.network.response.PokemonResponse
 import mx.marco.domain.model.network.response.PokemonSpeciesResponse
@@ -13,5 +14,7 @@ interface PokemonRepository {
     suspend fun getSpecies(pokemonId: Int): Resource<PokemonSpeciesResponse>
 
     suspend fun getList(): Resource<PokemonListResponse>
+
+    suspend fun getLimitList(): Resource<PokemonLimitListResponse>
 
 }

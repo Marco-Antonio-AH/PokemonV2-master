@@ -9,6 +9,7 @@ import mx.marco.data.use_case.LocalInsertPokemonUseCaseImpl
 import mx.marco.data.use_case.LocalPokemonGetListUseCaseImpl
 import mx.marco.data.use_case.LocalPokemonGetUseCaseImpl
 import mx.marco.data.use_case.LocalPokemonUpdateUseCaseImpl
+import mx.marco.data.use_case.PokemonLimitListUseCaseImpl
 import mx.marco.data.use_case.PokemonListUseCaseImpl
 import mx.marco.data.use_case.PokemonSpeciesUseCaseImpl
 import mx.marco.data.use_case.PokemonUseCaseImpl
@@ -18,6 +19,7 @@ import mx.marco.domain.use_case.LocalInsertPokemonUseCase
 import mx.marco.domain.use_case.LocalPokemonGetAllUseCase
 import mx.marco.domain.use_case.LocalPokemonGetUseCase
 import mx.marco.domain.use_case.LocalPokemonUpdateUseCase
+import mx.marco.domain.use_case.PokemonLimitListUseCase
 import mx.marco.domain.use_case.PokemonListUseCase
 import mx.marco.domain.use_case.PokemonSpeciesUseCase
 
@@ -50,6 +52,16 @@ object UseCaseModule {
         pokemonRepository: PokemonRepository
     ): PokemonListUseCase {
         return PokemonListUseCaseImpl(
+            pokemonRepository
+        )
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun providePokemonLimitListUseCase(
+        pokemonRepository: PokemonRepository
+    ): PokemonLimitListUseCase {
+        return PokemonLimitListUseCaseImpl(
             pokemonRepository
         )
     }

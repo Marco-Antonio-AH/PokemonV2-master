@@ -129,7 +129,6 @@ fun Act2Screen(
 
                                 Spacer(modifier = Modifier.width(spacing.spaceLarge))
                                 println("${it.number} nombre")
-                                println("paso por aqui nombre")
                                 Text(
                                     text = it.name,
                                     color = MaterialTheme.colorScheme.primary,
@@ -147,7 +146,6 @@ fun Act2Screen(
 
             } else {
                 viewModel.state.filteredListPokemon.forEach {
-                    println("paso por aqui despues forEach")
                     Column(
                         modifier = Modifier
                             .padding(top = 30.dp)
@@ -171,13 +169,10 @@ fun Act2Screen(
                     ) {
                         Card(
                             modifier = Modifier
-                                .background(Color.Cyan)
+
                         ) {
                             Row(modifier = Modifier.fillMaxSize()) {
 
-
-                                println("${it.number} numero")
-                                println("paso por aqui numero")
                                 Text(
                                     text = it.number.toString(),
                                     color = MaterialTheme.colorScheme.primary,
@@ -186,8 +181,6 @@ fun Act2Screen(
                                 )
 
                                 Spacer(modifier = Modifier.width(spacing.spaceLarge))
-                                println("${it.number} nombre")
-                                println("paso por aqui nombre")
                                 Text(
                                     text = it.name,
                                     color = MaterialTheme.colorScheme.primary,
@@ -201,9 +194,6 @@ fun Act2Screen(
                                     style = MaterialTheme.typography.bodyMedium,
                                     modifier = Modifier.align(Alignment.CenterVertically),
                                 )
-                                println("${it.types} busqueda tipos")
-
-
                             }
                         }
 
