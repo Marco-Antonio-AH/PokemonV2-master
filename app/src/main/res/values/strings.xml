@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">PokedexV2</string>
+    <string name="welcome">Bienvenido</string>
+    <string name="nothing" />
+    <string name="input_activity1">Calculadora</string>
+    <string name="forget_password">¿Olvidaste tu contraseña?</string>
+    <string name="login">Iniciar Sesión</string>
+    <string name="o">o</string>
+    <string name="registry_1">¿Aún no tienes cuenta? </string>
+    <string name="registry_2"> Registrarse</string>
+    <string name="register">Registrarse</string>
+    <string name="fullname">Nombre completo</string>
+    <string name="phone">Celular</string>
+    <string name="password">Contraseña</string>
+    <string name="confirm_password">Confirmar contraseña</string>
+    <string name="registry">Registro</string>
+    <string name="act1_error_required">Campo requerido</string>
+    <string name="act1_error_format">El número debe estar entre 1 y 100.</string>
+    <string name="required_text_field_label">Campo requerido.</string>
+    <string name="invalid_phone_number_label">Número de télefono no valido.</string>
+    <string name="invalid_email_label">Correo electrónico invalido.</string>
+    <string name="calculate">Calcular</string>
+    <string name="result_is">"El resultado es: "</string>
+    <string name="prome_is">"Tu promedio es: "</string>
+    <string name="result_prom_is">"Tú estás: "</string>
+    <string name="serachPokemon">Buscar pokemón</string>
+    <string name="obtener">Obtener  pokemón\n</string>
+    <string name="favoritos">Favoritos</string>
+
+
+</resources>
