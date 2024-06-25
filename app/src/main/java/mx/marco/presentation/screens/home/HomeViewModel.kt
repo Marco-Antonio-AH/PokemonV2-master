@@ -34,10 +34,14 @@ class HomeViewModel @Inject constructor(
     private val _uiEvent = Channel<PokemonUiEvent>()
 
 
+
     init {
         initViewState(Act2ViewState())
         fetchPokemonById()
         limitList()
+
+
+
     }
 
 
@@ -69,37 +73,41 @@ class HomeViewModel @Inject constructor(
 
     }
 
+
+
     fun filtrarPokemon(pokemonList: List<PokemonMap>, terminoBusqueda: String): List<PokemonMap> {
         return pokemonList.filter { it.name.contains(terminoBusqueda, ignoreCase = true) || it.types.any { tipo -> tipo.contains(terminoBusqueda, ignoreCase = true) } }
     }
 
 
     private fun limitList(){
-        viewModelScope.launch {
 
-            when (val response = pokemonLimitListUseCase.invoke()) {
+        viewModelScope.launch {
+            when (val response = pokemonLimitListUseCase.invoke( offset = 0,limit = 8)) {
                 is Resource.Error -> {
                     state = state.copy(isLoading = false)
                     success(false)
                 }
                 is Resource.Success -> {
-                    response.data?.let { data ->
-                        state = state.copy(isLoading = false)
-                        val listLimitPokemons = data.results.map { result ->
+                    response.data.also { data ->
+                        val listLimitPokemons = data?.results?.map { result ->
                             ListLimitPokemon(
-                                name = result.name,
-                                url = result.url
+                                nombre = result.name,
                             )
                         }
                         state = state.copy(
                             pokemonListLimitState = listLimitPokemons
                         )
-                        println("${state.pokemonListLimitState} lista")
+                        println("$listLimitPokemons")
                     }
+                    state = state.copy(
+                        pokemon2 = response.data
+                    )
                 }
             }
         }
     }
+
 
     private fun fetchPokemonById() {
         for (i in 1..1302) {

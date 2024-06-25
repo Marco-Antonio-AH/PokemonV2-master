@@ -4,6 +4,7 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import mx.marco.domain.model.network.response.PokemonResponse
+import mx.marco.domain.model.network.response.PokemonResponseLimitList
 import mx.marco.presentation.viewstate.ViewState
 
 data class Act2ViewState(
@@ -18,9 +19,10 @@ data class Act2ViewState(
     val result: String = "",
     val isLoading: Boolean = false,
     val pokemon: PokemonResponse? = null,
+    val pokemon2: PokemonResponseLimitList? = null,
     val listPokemon:List<PokemonMap> = listOf(),
     val filteredListPokemon:List<PokemonMap> = listOf(),
-    val pokemonListLimitState : List<ListLimitPokemon> = listOf()
+    val pokemonListLimitState : List<ListLimitPokemon>? = listOf()
 ) : ViewState()
 //ListDescription(id = 0, description = "")
 @Parcelize
@@ -33,8 +35,6 @@ data class ListDescription(
 
 @Parcelize
 data class ListLimitPokemon(
-    val name : String = "",
-    val url: String = "",
-
-):Parcelable
+    var nombre: String = "",
+    ):Parcelable
 

@@ -4,9 +4,9 @@ import android.util.Log
 import mx.marco.util.Resource
 import mx.marco.domain.preferences.Preferences
 import mx.marco.data.remote.PokemonApiService
-import mx.marco.domain.model.network.response.PokemonLimitListResponse
 import mx.marco.domain.model.network.response.PokemonListResponse
 import mx.marco.domain.model.network.response.PokemonResponse
+import mx.marco.domain.model.network.response.PokemonResponseLimitList
 import mx.marco.domain.model.network.response.PokemonSpeciesResponse
 import mx.marco.domain.repository.PokemonRepository
 
@@ -48,9 +48,9 @@ class PokemonRepositoryImpl(
         }
     }
 
-    override suspend fun getLimitList(): Resource<PokemonLimitListResponse>{
+    override suspend fun getLimitList( offset: Int, limit : Int): Resource<PokemonResponseLimitList>{
         return try {
-            val response = api.getLimitList()
+            val response = api.getLimitList(offset, limit)
             Resource.Success(response)
         }catch (e: Exception){
             Log.e("apiError", e.message ?: "Error")
