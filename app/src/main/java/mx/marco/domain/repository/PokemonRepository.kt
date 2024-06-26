@@ -10,9 +10,9 @@ import mx.marco.util.Resource
 
 interface PokemonRepository {
 
-    suspend fun getPokemon(pokemonId: Int): Resource<PokemonResponse>
+    suspend fun getPokemon(pokemonId: String): Resource<PokemonResponse>
 
-    suspend fun getSpecies(pokemonId: Int): Resource<PokemonSpeciesResponse>
+    suspend fun getSpecies(pokemonId: String): Resource<PokemonSpeciesResponse>
 
     suspend fun getList(): Resource<PokemonListResponse>
 

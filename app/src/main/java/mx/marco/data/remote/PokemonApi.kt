@@ -11,9 +11,9 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface PokemonApiService {
-    @GET("pokemon/{id}/")
+    @GET("pokemon/{name}/")
     suspend fun getPokemon(
-        @Path("id") id: Int,
+        @Path("name") namePokemonApi: String,
     ): PokemonResponse
 
 
@@ -27,9 +27,9 @@ interface PokemonApiService {
         @Query("limit") limit: Int
     ): PokemonResponseLimitList
 
-    @GET("pokemon-species/{id}/")
+    @GET("pokemon-species/{name}/")
     suspend fun getSpecies(
-        @Path("id") id: Int
+        @Path("name") nameSpeciesApi: String
     ):PokemonSpeciesResponse
 
 

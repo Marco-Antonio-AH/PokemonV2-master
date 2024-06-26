@@ -5,6 +5,6 @@ import mx.marco.util.Resource
 
 
 interface PokemonUseCase {
-    suspend operator fun invoke(pokemonId: Int): Resource<PokemonResponse>
+    suspend operator fun invoke(pokemonId: String): Resource<PokemonResponse>
 
 }

@@ -15,7 +15,7 @@ class PokemonRepositoryImpl(
     private val api: PokemonApiService,
     private val preferences: Preferences
 ) : PokemonRepository {
-    override suspend fun getPokemon(pokemonId: Int): Resource<PokemonResponse> {
+    override suspend fun getPokemon(pokemonId: String): Resource<PokemonResponse> {
         return try {
             val response = api.getPokemon(pokemonId)
 
@@ -25,7 +25,7 @@ class PokemonRepositoryImpl(
             Resource.Error(e.message ?: "Error")
         }
     }
-    override suspend fun getSpecies(pokemonId: Int): Resource<PokemonSpeciesResponse> {
+    override suspend fun getSpecies(pokemonId: String): Resource<PokemonSpeciesResponse> {
         return try {
             val response = api.getSpecies(pokemonId)
 

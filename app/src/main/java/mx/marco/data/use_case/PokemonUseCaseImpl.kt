@@ -10,7 +10,7 @@ class PokemonUseCaseImpl(
     private val pokemonRepository: PokemonRepository
 ): PokemonUseCase {
 
-    override suspend fun invoke(pokemonId: Int): Resource<PokemonResponse> {
+    override suspend fun invoke(pokemonId: String): Resource<PokemonResponse> {
         return pokemonRepository.getPokemon(pokemonId)
     }
 

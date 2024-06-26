@@ -1,27 +1,22 @@
 package mx.marco.presentation.screens.home
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,6 +36,9 @@ fun Act2Screen(
 ) {
     val spacing = LocalSpacing.current
     val uiState by viewModel.getState<Act2ViewState>().collectAsState()
+    val scrollState = rememberScrollState()
+    val context = LocalContext.current
+
     LoadingDialog(isVisible = uiState.isLoading)
     Screen(
         navController = navController,
@@ -73,14 +71,11 @@ fun Act2Screen(
                 .padding(top = 160.dp, start = 50.dp)
                 .fillMaxWidth(.9f)
                 .fillMaxHeight(.5f)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (viewModel.state.search == "") {
-                val kjds = viewModel.state.pokemonListLimitState
-                kjds?.forEach{}
-
-               val sortedList = viewModel.state.listPokemon.sortedBy { it.number }
+                val sortedList = viewModel.state.listPokemon.sortedBy { it.number }
                 sortedList.forEach {
                     Column(
                         modifier = Modifier
@@ -105,18 +100,14 @@ fun Act2Screen(
                     ) {
                         Card(
                             modifier = Modifier
-
                         ) {
                             Row(modifier = Modifier.fillMaxSize()) {
-
                                 AsyncImage(
                                     model = it.stripe,
-
                                     contentDescription = null,
                                     modifier = Modifier
                                         .fillMaxWidth(.4f)
                                         .fillMaxHeight()
-
                                         .padding(spacing.spaceMedium),
                                     contentScale = ContentScale.Crop
                                 )
@@ -128,22 +119,16 @@ fun Act2Screen(
                                 )
 
                                 Spacer(modifier = Modifier.width(spacing.spaceLarge))
-                                println("${it.number} nombre")
                                 Text(
                                     text = it.name,
                                     color = MaterialTheme.colorScheme.primary,
                                     style = MaterialTheme.typography.bodyMedium,
                                     modifier = Modifier.align(Alignment.CenterVertically),
                                 )
-
-
                             }
                         }
-
                     }
-
                 }
-
             } else {
                 viewModel.state.filteredListPokemon.forEach {
                     Column(
@@ -169,17 +154,14 @@ fun Act2Screen(
                     ) {
                         Card(
                             modifier = Modifier
-
                         ) {
                             Row(modifier = Modifier.fillMaxSize()) {
-
                                 Text(
                                     text = it.number.toString(),
                                     color = MaterialTheme.colorScheme.primary,
                                     style = MaterialTheme.typography.bodyMedium,
                                     modifier = Modifier.align(Alignment.CenterVertically),
                                 )
-
                                 Spacer(modifier = Modifier.width(spacing.spaceLarge))
                                 Text(
                                     text = it.name,
@@ -196,20 +178,16 @@ fun Act2Screen(
                                 )
                             }
                         }
-
                     }
-
                 }
-
             }
 
 
+            LaunchedEffect(scrollState.value) {
+                if (scrollState.isScrollInProgress && scrollState.value >= scrollState.maxValue) {
+                    viewModel.loadMorePokemon(context)
+                }
+            }
         }
-
-
     }
 }
-
-
-
-
