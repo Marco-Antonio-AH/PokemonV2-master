@@ -45,7 +45,10 @@ class HomeViewModel @Inject constructor(
 
     fun onEvent(event: HomeViewEvent) {
         when (event) {
-            is HomeViewEvent.UpdateSearch -> updateSearch(event.newText)
+            is HomeViewEvent.UpdateSearch -> {
+                updateSearch(event.newText)
+                searchAllPokemon(event.newText)
+            }
             else -> {}
         }
     }
@@ -71,6 +74,7 @@ class HomeViewModel @Inject constructor(
                     it.types.any { tipo -> tipo.contains(terminoBusqueda, ignoreCase = true) }
         }
     }
+
 
     private fun loadPokemon() {
         viewModelScope.launch {
@@ -148,5 +152,29 @@ class HomeViewModel @Inject constructor(
 
         val listPokemon = state.listPokemon.plus(pokemon)
         state = state.copy(listPokemon = listPokemon, isLoading = false)
+    }
+
+    private fun searchAllPokemon(query: String) {
+        viewModelScope.launch {
+            when (val response = pokemonListUseCase.invoke()) {
+                is Resource.Error -> {
+                    _uiEvent.send(PokemonUiEvent.ShowSnackBar(response.message ?: "Error al buscar Pokémon"))
+                }
+                is Resource.Success -> {
+                    val results = response.data?.results?.filter {
+                        it.name.contains(query, ignoreCase = true)
+                    } ?: emptyList()
+
+                    val filteredList = results.map { result ->
+                        fetchPokemonDetails(result.name)
+                        state.listPokemon.find { it.name == result.name }!!
+                    }
+
+                    state = state.copy(
+                        filteredListPokemon = filteredList
+                    )
+                }
+            }
+        }
     }
 }
