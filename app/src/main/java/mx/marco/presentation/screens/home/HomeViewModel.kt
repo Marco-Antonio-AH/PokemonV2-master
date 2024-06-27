@@ -28,7 +28,6 @@ import kotlin.Result.Companion.success
 class HomeViewModel @Inject constructor(
     private val pokemonUseCase: PokemonUseCase,
     private val pokemonSpeciesUseCase: PokemonSpeciesUseCase,
-    private val pokemonListUseCase: PokemonListUseCase,
     private val pokemonLimitListUseCase: PokemonLimitListUseCase,
     application: Application,
 ) : BaseViewModel(application) {
@@ -42,6 +41,7 @@ class HomeViewModel @Inject constructor(
     private var offset = 0
     private var searchJob: Job? = null
     private var fetchDetailsJobs: List<Job>? = null
+    private var searchTimeoutJob: Job? = null
 
     init {
         initViewState(Act2ViewState())
@@ -57,13 +57,24 @@ class HomeViewModel @Inject constructor(
             is HomeViewEvent.UpdateSearch -> {
                 updateSearch(event.newText)
                 searchJob?.cancel()
-                searchJob = viewModelScope.launch {
-                    delay(300)
-                    searchAllPokemon(event.newText)
+                searchTimeoutJob?.cancel()
+                if (event.newText.isEmpty()) {
+                    searchTimeoutJob = viewModelScope.launch {
+                        delay(4000)
+                        clearSearch()
+                    }
+                } else {
+                    searchJob = viewModelScope.launch {
+                        delay(300)
+                        searchAllPokemon(event.newText)
+                    }
                 }
             }
             else -> {}
         }
+    }
+    private fun clearSearch() {
+        state = state.copy(search = "", filteredListPokemon = emptyList())
     }
 
     private fun extractEnglishDescription(pokemonSpecies: PokemonSpeciesResponse): String {
@@ -91,6 +102,7 @@ class HomeViewModel @Inject constructor(
 
     private fun loadPokemon() {
         viewModelScope.launch {
+            state = state.copy(isLoading = true)
             when (val response = pokemonLimitListUseCase.invoke(offset = offset, limit = limit)) {
                 is Resource.Error -> {
                     state = state.copy(isLoading = false)
@@ -98,24 +110,26 @@ class HomeViewModel @Inject constructor(
                 }
                 is Resource.Success -> {
                     response.data?.results?.let { results ->
-                        results.forEach { result ->
+                        fetchDetailsJobs = results.map { result ->
                             launch {
                                 fetchPokemonDetails(result.name)
                             }
                         }
+                        fetchDetailsJobs?.joinAll()
+                        state = state.copy(
+                            pokemon2 = response.data
+                        )
+                        offset += limit
                     }
-                    state = state.copy(
-                        pokemon2 = response.data
-                    )
-                    offset += limit
                 }
             }
+            state = state.copy(isLoading = false)
         }
     }
 
+
     fun loadMorePokemon(context: Context) {
         if (!state.isLoading) {
-            state = state.copy(isLoading = true)
             Toast.makeText(context, "Cargando más Pokémon", Toast.LENGTH_SHORT).show()
             loadPokemon()
         }
@@ -169,7 +183,7 @@ class HomeViewModel @Inject constructor(
 
     private fun searchAllPokemon(query: String) {
         viewModelScope.launch {
-            cancelFetchDetailsJobs() // Cancelar trabajos de detalles pendientes si los hay
+            cancelFetchDetailsJobs()
 
             when (val response = pokemonLimitListUseCase.invoke(offset = 0, limit = 1300)) {
                 is Resource.Error -> {
