@@ -15,7 +15,6 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import mx.marco.domain.model.network.response.PokemonSpeciesResponse
 import mx.marco.domain.use_case.PokemonLimitListUseCase
-import mx.marco.domain.use_case.PokemonListUseCase
 import mx.marco.domain.use_case.PokemonSpeciesUseCase
 import mx.marco.presentation.screens.favorites.PokemonUiEvent
 import mx.marco.presentation.viewmodel.BaseViewModel
@@ -70,7 +69,6 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             }
-            else -> {}
         }
     }
     private fun clearSearch() {
@@ -84,20 +82,19 @@ class HomeViewModel @Inject constructor(
         return englishFlavorTextEntry?.flavorText ?: "Descripción no disponible"
     }
 
-    fun updateSearch(newSearchValue: String) {
-        val listFilter = filtrarPokemon(state.listPokemon, newSearchValue)
+    private fun updateSearch(newSearchValue: String) {
+        val listFilter = pokemonFilter(state.listPokemon, newSearchValue)
         state = state.copy(
             search = newSearchValue,
             filteredListPokemon = listFilter
         )
     }
 
-    fun filtrarPokemon(pokemonList: List<PokemonMap>, terminoBusqueda: String): List<PokemonMap> {
-        return pokemonList.filter {
-            it.name.contains(terminoBusqueda, ignoreCase = true) ||
-                    it.types.any { tipo -> tipo.contains(terminoBusqueda, ignoreCase = true) }
+    private fun pokemonFilter(pokemonList: List<PokemonMap>, search: String) = pokemonList.filter {
+            it.name.contains(search, ignoreCase = true) ||
+                    it.types.any { type -> type.contains(search, ignoreCase = true) }
         }
-    }
+
 
 
     private fun loadPokemon() {
@@ -138,8 +135,7 @@ class HomeViewModel @Inject constructor(
     private suspend fun fetchPokemonDetails(name: String) {
         val pokemon = PokemonMap()
         try {
-            val pokemonResponse = pokemonUseCase.invoke(name)
-            when (pokemonResponse) {
+            when (val pokemonResponse = pokemonUseCase.invoke(name)) {
                 is Resource.Error -> {
                     _uiEvent.send(PokemonUiEvent.ShowSnackBar(pokemonResponse.message ?: ""))
                 }
@@ -161,8 +157,7 @@ class HomeViewModel @Inject constructor(
         }
 
         try {
-            val speciesResponse = pokemonSpeciesUseCase.invoke(name)
-            when (speciesResponse) {
+            when (val speciesResponse = pokemonSpeciesUseCase.invoke(name)) {
                 is Resource.Error -> {
                     _uiEvent.send(PokemonUiEvent.ShowSnackBar(speciesResponse.message ?: ""))
                 }
@@ -211,7 +206,7 @@ class HomeViewModel @Inject constructor(
                                         typeStats = pokemonResponse.data.stats.map { stat ->
                                             "${stat.stat.name}: ${stat.base_stat}"
                                         }
-                                        abilities = pokemonResponse.data?.abilities!!.map { ability -> ability.ability.name }
+                                        abilities = pokemonResponse.data.abilities.map { ability -> ability.ability.name }
                                         description = speciesResponse.data?.let {
                                             extractEnglishDescription(
                                                 it
