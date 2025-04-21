@@ -3,21 +3,17 @@ package mx.marco.presentation.screens.favorites
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -32,92 +28,87 @@ import mx.marco.presentation.screens.home.PokemonMap
 import mx.marco.presentation.theme.LocalSpacing
 import mx.marco_ah.R
 
-
 @Composable
 fun Act1Screen(
-    navController: NavController, viewModel: FavoritiesViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: FavoritiesViewModel = hiltViewModel()
 ) {
     val spacing = LocalSpacing.current
+    val uiState by viewModel.uiState.collectAsState()
 
     Screen(
-        navController = navController, buttonBack = false, currentRoute = Screens.ACT_1
+        navController = navController,
+        buttonBack = false,
+        currentRoute = Screens.ACT_1
     ) {
         Image(
             painter = painterResource(id = R.drawable.pokedex_splashrecortadp),
             contentDescription = null,
-            contentScale = ContentScale.FillHeight,
+            contentScale = ContentScale.FillBounds,
             modifier = Modifier.matchParentSize()
         )
+
         Column(
             modifier = Modifier
-                .padding(top = 160.dp, start = 50.dp)
-                .fillMaxHeight(.54f)
-                .fillMaxWidth(.85f)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-        viewModel.state.listPokemon.forEach {
-            println("${it} favoritos")
+                .offset( x = 8.dp, y = -40.dp)
 
+                .fillMaxHeight(0.40f)
+                .fillMaxWidth(0.85f)
+                .verticalScroll(rememberScrollState())
+                .align( BiasAlignment(horizontalBias = 0f, verticalBias = 0.0f) ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+
+            uiState.listPokemon.forEach { pokemon ->
                 Column(
                     modifier = Modifier
-                        .padding(top = 30.dp)
-                        .fillMaxWidth(.8f)
-                        .fillMaxHeight(.2f)
+                        .offset(y = -26.dp)
+                        .padding(top = 24.dp)
+                        .fillMaxWidth(0.8f)
                         .clickable {
                             navController.currentBackStackEntry?.savedStateHandle?.set(
-                                "pokemonData", PokemonMap(
-                                    name = it.name,
-                                    number = it.number,
-                                    description = it.description,
-                                    stripe = it.stripe,
-                                    types = it.types,
-                                    typeStats = it.typeStats,
-                                    abilities = it.abilities
+                                "pokemonData",
+                                PokemonMap(
+                                    name = pokemon.name,
+                                    number = pokemon.number,
+                                    description = pokemon.description,
+                                    stripe = pokemon.stripe,
+                                    types = pokemon.types,
+                                    typeStats = pokemon.typeStats,
+                                    abilities = pokemon.abilities
                                 )
                             )
                             navController.navigate(Screens.POKEMON_DESCRIPTION)
-                        },
+                        }
                 ) {
-                    Card(
-                        modifier = Modifier.background(Color.Cyan)
-                    ) {
-                        Row(modifier = Modifier.fillMaxSize()) {
-
+                    Card {
+                        Row(modifier = Modifier.fillMaxWidth()) {
                             AsyncImage(
-                                model = it.stripe,
-
+                                model = pokemon.stripe,
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .fillMaxWidth(.4f)
-                                    .fillMaxHeight()
-
+                                    .fillMaxWidth(0.4f)
+                                    .aspectRatio(1f)
                                     .padding(spacing.spaceMedium),
                                 contentScale = ContentScale.Crop
                             )
-                            println("${it.number} numero")
-                            println("paso por aqui numero")
+                            Spacer(modifier = Modifier.width(spacing.spaceMedium))
                             Text(
-                                text = it.number.toString(),
-                                color = MaterialTheme.colorScheme.primary,
+                                text = pokemon.number.toString(),
                                 style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.align(Alignment.CenterVertically),
+                                modifier = Modifier.align(Alignment.CenterVertically)
                             )
-
                             Spacer(modifier = Modifier.width(spacing.spaceLarge))
-                            println("${it.number} nombre")
-                            println("paso por aqui nombre")
                             Text(
-                                text = it.name,
-                                color = MaterialTheme.colorScheme.primary,
+                                text = pokemon.name,
                                 style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.align(Alignment.CenterVertically),
+                                modifier = Modifier.align(Alignment.CenterVertically)
                             )
                         }
                     }
                 }
             }
-
         }
     }
 }
